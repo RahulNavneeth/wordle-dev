@@ -1,4 +1,9 @@
 import { writable } from 'svelte/store';
 
-// Initializes a 2D array of 6 rows and 5 cells with empty string each => [["","","","",""] , .3. , ["","","","",""]]
-export let GRID = writable<Array<string[]>>([...Array(6)].map(() => [...Array(5)].map(() => '')));
+type grid = { completed: boolean; row: string[] };
+
+export let GRID = writable<grid[]>(
+	[...Array(6)].map((_element, index) => {
+		return { completed: index === 0 ? true : false, row: [...Array(5)].map(() => '') };
+	})
+);
