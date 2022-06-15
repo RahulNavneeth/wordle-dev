@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { GRID } from '$lib/store/grid';
+	import { CURRENT_WORD } from '$lib/store/current_word';
 	$: console.log($GRID);
+	$: console.log($CURRENT_WORD);
 </script>
 
 <div class="flex flex-col items-center justify-center">
