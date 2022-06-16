@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { GRID } from '$lib/store/grid';
 	import { CURRENT_WORD } from '$lib/store/current_word';
+	import { clear_loops, element } from 'svelte/internal';
 	console.log($CURRENT_WORD);
 
 	const onKeyUp = (index_row: number, index_cel: number, e: any) => {
@@ -12,29 +13,45 @@
 		} else {
 			const cell = document.getElementById(`row${index_row}cell${index_cel + 1}`);
 			if ($GRID[index_row].row[index_cel].character.length === 1) {
-				cell?.focus();
+				if (index_cel !== 5) {
+					cell?.focus();
+				}
 			}
 		}
 	};
 
 	const submit = (index_row: number) => {
-		if (index_row !== 5) {
-			if ($GRID[index_row].row.map((element) => element.character).includes('')) {
-				for (const i in $GRID[index_row].row) {
-					if ($GRID[index_row].row[i].character === '') {
-						$GRID[index_row].row[i].type = 'error';
-					} else {
-						$GRID[index_row].row[i].type = 'normal';
-					}
+		if ($GRID[index_row].row.map((element) => element.character).includes('')) {
+			for (const i in $GRID[index_row].row) {
+				if ($GRID[index_row].row[i].character === '') {
+					$GRID[index_row].row[i].type = 'error';
+				} else {
+					$GRID[index_row].row[i].type = 'normal';
 				}
-			} else {
-				$GRID[index_row].isFocus = false;
-				$GRID[index_row + 1].isFocus = true;
-				const cell = document.getElementById(`row${index_row + 1}cell0`);
-				cell?.focus();
 			}
 		} else {
-			console.log($GRID);
+			document.getElementById(`row${index_row + 1}cell0`)?.focus();
+			$GRID[index_row].isFocus = false;
+			$GRID[index_row].row
+				.map((element) => element.character)
+				.map((element, i) => {
+					const current_word = $CURRENT_WORD.split('');
+					if (current_word.includes($GRID[index_row].row[i].character.toUpperCase())) {
+						if (current_word[i] === element.toUpperCase()) {
+							$GRID[index_row].row[i].type = 'placed';
+						} else {
+							$GRID[index_row].row[i].type = 'misplaced';
+						}
+					} else {
+						console.log(false);
+					}
+				});
+			console.log($GRID[index_row]);
+			if (index_row !== 5) {
+				$GRID[index_row + 1].isFocus = true;
+			} else {
+				console.log($GRID);
+			}
 		}
 	};
 </script>
@@ -55,6 +72,10 @@
 							? cell.type === 'error'
 								? 'border-red-700'
 								: 'border-white '
+							: cell.type === 'placed'
+							? 'border-lime-700 bg-lime-300 text-black shadow-inner'
+							: cell.type === 'misplaced'
+							? 'border-yellow-700 bg-yellow-300 text-black'
 							: 'border-gray-500'} bg-black outline-none font-primary capitalize font-black text-white rounded-md m-1"
 					/>
 					<button class="hidden" />
