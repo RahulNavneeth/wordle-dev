@@ -22,6 +22,7 @@
 				}
 			}
 		}
+		localStorage.setItem('grid', JSON.stringify($GRID));
 	};
 
 	const submit = (index_row: number) => {
@@ -61,16 +62,22 @@
 					.join('')
 					.toUpperCase()
 			) {
-				$WIN = true;
-				$GRID[index_row + 1].isFocus = false;
-			} else {
+				$WIN.isWon = true;
+				$WIN.streak++;
+				localStorage.setItem('win', JSON.stringify($WIN));
+				if (index_row !== 5) {
+					$GRID[index_row + 1].isFocus = false;
+				}
 			}
 		}
+
+		localStorage.setItem('grid', JSON.stringify($GRID));
+		localStorage.setItem('used_letters', JSON.stringify($USED_LETTERS));
 	};
 </script>
 
 <div class="flex flex-col items-center justify-evenly h-full">
-	{#if $WIN}
+	{#if $WIN.isWon}
 		<div class="font-primary h-[60px] font-extrabold text-[60px] text-lime-300">YOU WON</div>
 	{:else}
 		<div class="flex flex-row h-[60px] items-center w-screen flex-wrap justify-center">
@@ -98,6 +105,7 @@
 							disabled={!row.isFocus}
 							on:keyup={(e) => onKeyUp(index_row, index_cell, e)}
 							type="text"
+							value={cell.character.toUpperCase()}
 							id="row{index_row}cell{index_cell}"
 							maxlength="1"
 							class="w-[60px] h-[60px] focus:scale-[110%] transition-all text-center border-2 text-[30px] {row.isFocus
