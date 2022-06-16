@@ -21,11 +21,10 @@
 		if (index_row !== 5) {
 			if ($GRID[index_row].row.map((element) => element.character).includes('')) {
 				for (const i in $GRID[index_row].row) {
-					const element = $GRID[index_row].row[i];
-					if (element.character === '') {
-						element.type = 'error';
+					if ($GRID[index_row].row[i].character === '') {
+						$GRID[index_row].row[i].type = 'error';
 					} else {
-						element.type = 'normal';
+						$GRID[index_row].row[i].type = 'normal';
 					}
 				}
 			} else {
