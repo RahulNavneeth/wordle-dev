@@ -116,7 +116,7 @@
 								? 'border-lime-700 bg-lime-300 text-black shadow-inner'
 								: cell.type === 'misplaced'
 								? 'border-yellow-700 bg-yellow-300 text-black'
-								: 'border-gray-500'} bg-black outline-none font-primary capitalize font-black text-white rounded-md m-1"
+								: 'border-gray-500 bg-black text-white'} outline-none font-primary capitalize font-black rounded-md m-1"
 						/>
 						<button class="hidden" />
 					{/each}
