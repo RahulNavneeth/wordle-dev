@@ -1,16 +1,20 @@
 <script lang="ts">
 	import { GRID } from '$lib/store/grid';
 	import { CURRENT_WORD } from '$lib/store/current_word';
-	import { clear_loops, element } from 'svelte/internal';
-	console.log($CURRENT_WORD);
+	import { WIN } from '$lib/store/win';
+	import { USED_LETTERS } from '$lib/store/used_letters';
 
 	const onKeyUp = (index_row: number, index_cel: number, e: any) => {
 		const key = e.keyCode || e.charCode;
 		if (key === 8) {
-			const cell = document.getElementById(`row${index_row}cell${index_cel - 1}`);
-			cell?.focus();
-			$GRID[index_row].row[index_cel].character = '';
+			if ($GRID[index_row].row[index_cel].character === '') {
+				const cell = document.getElementById(`row${index_row}cell${index_cel - 1}`);
+				cell?.focus();
+			} else {
+				$GRID[index_row].row[index_cel].character = '';
+			}
 		} else {
+			$GRID[index_row].row[index_cel].character = e.target.value;
 			const cell = document.getElementById(`row${index_row}cell${index_cel + 1}`);
 			if ($GRID[index_row].row[index_cel].character.length === 1) {
 				if (index_cel !== 5) {
@@ -42,45 +46,75 @@
 						} else {
 							$GRID[index_row].row[i].type = 'misplaced';
 						}
-					} else {
-						console.log(false);
+					}
+					if (!$USED_LETTERS.includes(element)) {
+						$USED_LETTERS = [...$USED_LETTERS, element];
 					}
 				});
-			console.log($GRID[index_row]);
 			if (index_row !== 5) {
 				$GRID[index_row + 1].isFocus = true;
+			}
+			if (
+				$CURRENT_WORD ===
+				$GRID[index_row].row
+					.map((element) => element.character)
+					.join('')
+					.toUpperCase()
+			) {
+				$WIN = true;
+				$GRID[index_row + 1].isFocus = false;
 			} else {
-				console.log($GRID);
 			}
 		}
 	};
 </script>
 
-<div class="flex flex-col items-center justify-center">
-	{#each $GRID as row, index_row}
-		<form on:submit|preventDefault={() => submit(index_row)}>
-			<div id="row" class="flex flex-row items-center jusity-center">
-				{#each row.row as cell, index_cell}
-					<input
-						disabled={!row.isFocus}
-						bind:value={cell.character}
-						on:keyup={(e) => onKeyUp(index_row, index_cell, e)}
-						type="text"
-						id="row{index_row}cell{index_cell}"
-						maxlength="1"
-						class="w-[60px] h-[60px] focus:scale-[110%] transition-all text-center border-2 text-[30px] {row.isFocus
-							? cell.type === 'error'
-								? 'border-red-700'
-								: 'border-white '
-							: cell.type === 'placed'
-							? 'border-lime-700 bg-lime-300 text-black shadow-inner'
-							: cell.type === 'misplaced'
-							? 'border-yellow-700 bg-yellow-300 text-black'
-							: 'border-gray-500'} bg-black outline-none font-primary capitalize font-black text-white rounded-md m-1"
-					/>
-					<button class="hidden" />
-				{/each}
-			</div>
-		</form>
-	{/each}
+<div class="flex flex-col items-center justify-evenly h-full">
+	{#if $WIN}
+		<div class="font-primary h-[60px] font-extrabold text-[60px] text-lime-300">YOU WON</div>
+	{:else}
+		<div class="flex flex-row h-[60px] items-center w-screen flex-wrap justify-center">
+			{#each $USED_LETTERS as i, k}
+				<div class="flex-none">
+					<div
+						class="font-primary m-1 flex flex-col items-center justify-center rounded-lg font-extrabold md:text-[30px] text-[20px] w-[30px] h-[30px] md:w-[50px] md:h-[50px] {$CURRENT_WORD
+							.split('')
+							.includes(i.toUpperCase())
+							? 'bg-yellow-300'
+							: 'bg-red-500'} text-black"
+					>
+						{i.toUpperCase()}
+					</div>
+				</div>
+			{/each}
+		</div>
+	{/if}
+	<div class="w-full flex flex-col items-center">
+		{#each $GRID as row, index_row}
+			<form on:submit|preventDefault={() => submit(index_row)}>
+				<div id="row" class="flex flex-row items-center jusity-center">
+					{#each row.row as cell, index_cell}
+						<input
+							disabled={!row.isFocus}
+							on:keyup={(e) => onKeyUp(index_row, index_cell, e)}
+							type="text"
+							id="row{index_row}cell{index_cell}"
+							maxlength="1"
+							class="w-[60px] h-[60px] focus:scale-[110%] transition-all text-center border-2 text-[30px] {row.isFocus
+								? cell.type === 'error'
+									? 'border-red-700'
+									: 'border-white '
+								: cell.type === 'placed'
+								? 'border-lime-700 bg-lime-300 text-black shadow-inner'
+								: cell.type === 'misplaced'
+								? 'border-yellow-700 bg-yellow-300 text-black'
+								: 'border-gray-500'} bg-black outline-none font-primary capitalize font-black text-white rounded-md m-1"
+						/>
+						<button class="hidden" />
+					{/each}
+				</div>
+			</form>
+		{/each}
+	</div>
+	<div class="h-[60px]" />
 </div>
