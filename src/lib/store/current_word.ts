@@ -1,10 +1,10 @@
 import { writable } from 'svelte/store';
 import axios from 'axios';
-import { API_HOST, API_WORD } from '../constant';
+import { API_HOST } from '../constant';
 
-// gets random word for CURRENT_WORD from '/api/words'
+// gets random word for CURRENT_WORD from '/api/word'
 const getWord = async () => {
-	const { data } = await axios.get(API_HOST + API_WORD);
+	const { data } = await axios.get(`${API_HOST}/api/word`);
 	return data.word;
 };
 
