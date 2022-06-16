@@ -2,11 +2,8 @@ import { writable } from 'svelte/store';
 import axios from 'axios';
 import { API_HOST } from '../constant';
 
-const getWord = () => {
-	let DATA = '';
-	axios.get(`${API_HOST}/api/word`).then((response) => {
-		DATA = response.data.word;
-	});
-	return DATA;
+const getWord = async () => {
+	const { data } = await axios.get(`${API_HOST}/api/word`);
+	return data.word;
 };
-export const CURRENT_WORD = writable<string>(getWord());
+export const CURRENT_WORD = writable<string>(await getWord());

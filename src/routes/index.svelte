@@ -111,15 +111,15 @@
 							class="w-[60px] h-[60px] focus:scale-[110%] transition-all text-center border-2 text-[30px] {row.isFocus
 								? cell.type === 'error'
 									? 'border-red-700'
-									: 'border-white '
+									: 'border-white bg-black text-white'
 								: cell.type === 'placed'
 								? 'border-lime-700 bg-lime-300 text-black shadow-inner'
 								: cell.type === 'misplaced'
 								? 'border-yellow-700 bg-yellow-300 text-black'
 								: 'border-gray-500 bg-black text-white'} outline-none font-primary capitalize font-black rounded-md m-1"
 						/>
-						<button class="hidden" />
 					{/each}
+					<button class="hidden" />
 				</div>
 			</form>
 		{/each}
