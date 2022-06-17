@@ -37,6 +37,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Wordle - DEV</title>
+</svelte:head>
+
 <div class="bg-black w-screen h-screen flex flex-col items-center ">
 	<!-- <Nav /> -->
 	<div class="p-4 w-full h-full flex flex-col items-center justify-center">
