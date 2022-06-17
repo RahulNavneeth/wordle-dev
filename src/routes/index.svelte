@@ -28,37 +28,39 @@
 	};
 
 	const submit = (index_row: number) => {
-		const ROW = $GRID.grid[index_row].row;
-		if (ROW.map((element) => element.character).includes('')) {
-			for (const i in ROW) {
-				if (ROW[i].character === '') {
-					ROW[i].type = 'error';
+		if ($GRID.grid[index_row].row.map((element) => element.character).includes('')) {
+			for (const i in $GRID.grid[index_row].row) {
+				if ($GRID.grid[index_row].row[i].character === '') {
+					$GRID.grid[index_row].row[i].type = 'error';
 				} else {
-					ROW[i].type = 'normal';
+					$GRID.grid[index_row].row[i].type = 'normal';
 				}
 			}
 		} else {
 			document.getElementById(`row${index_row + 1}cell0`)?.focus();
 			$GRID.grid[index_row].isFocus = false;
-			ROW.map((element) => element.character).map((element, i) => {
-				const current_word = $CURRENT_WORD.split('');
-				if (current_word.includes(ROW[i].character.toUpperCase())) {
-					if (current_word[i] === element.toUpperCase()) {
-						ROW[i].type = 'placed';
-					} else {
-						ROW[i].type = 'misplaced';
+			$GRID.grid[index_row].row
+				.map((element) => element.character)
+				.map((element, i) => {
+					const current_word = $CURRENT_WORD.split('');
+					if (current_word.includes($GRID.grid[index_row].row[i].character.toUpperCase())) {
+						if (current_word[i] === element.toUpperCase()) {
+							$GRID.grid[index_row].row[i].type = 'placed';
+						} else {
+							$GRID.grid[index_row].row[i].type = 'misplaced';
+						}
 					}
-				}
-				if (!$USED_LETTERS.includes(element)) {
-					$USED_LETTERS = [...$USED_LETTERS, element];
-				}
-			});
+					if (!$USED_LETTERS.includes(element)) {
+						$USED_LETTERS = [...$USED_LETTERS, element];
+					}
+				});
 			if (index_row !== 5) {
 				$GRID.grid[index_row + 1].isFocus = true;
 			}
 			if (
 				$CURRENT_WORD ===
-				ROW.map((element) => element.character)
+				$GRID.grid[index_row].row
+					.map((element) => element.character)
 					.join('')
 					.toUpperCase()
 			) {
@@ -112,7 +114,7 @@
 							maxlength="1"
 							class="w-[60px] h-[60px] focus:scale-[110%] transition-all text-center border-2 text-[30px] {row.isFocus
 								? cell.type === 'error'
-									? 'border-red-700'
+									? 'border-red-700 bg-black text-white'
 									: 'border-white bg-black text-white'
 								: cell.type === 'placed'
 								? 'border-lime-700 bg-lime-300 text-black shadow-inner'
