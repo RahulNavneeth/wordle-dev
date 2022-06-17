@@ -17,7 +17,7 @@
 				let winData = localStorage.getItem('win');
 				if (winData) {
 					let win = JSON.parse(winData);
-					win.isWon = false;
+					win.isWon = 'PLAYING';
 					localStorage.setItem('win', JSON.stringify(win));
 				}
 				localStorage.removeItem('used_letters');
