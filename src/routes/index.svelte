@@ -133,7 +133,7 @@
 	<div class="h-[60px] w-full">
 		{#if $WIN.isWon}
 			<div class="text-white">
-				<div class="text-[40px] font-[courier] font-extrabold capitalize tracking-tight">
+				<div class="text-[40px] font-courier font-extrabold capitalize tracking-tight">
 					{$CURRENT_WORD.word} = () =>
 				</div>
 				<div class="font-[monospace] text-black font-bold bg-lime-300 px-4 text-[25px]">

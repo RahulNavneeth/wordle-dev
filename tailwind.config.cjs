@@ -4,7 +4,8 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				primary: ["'Bitter'", 'serif']
+				primary: ["'Bitter'", 'serif'],
+				courier: ["'Courier Prime'", 'monospace']
 			}
 		}
 	},
