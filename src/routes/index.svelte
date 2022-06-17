@@ -42,7 +42,7 @@
 			$GRID.grid[index_row].row
 				.map((element) => element.character)
 				.map((element, i) => {
-					const current_word = $CURRENT_WORD.split('');
+					const current_word = $CURRENT_WORD.word.split('');
 					if (current_word.includes($GRID.grid[index_row].row[i].character.toUpperCase())) {
 						if (current_word[i] === element.toUpperCase()) {
 							$GRID.grid[index_row].row[i].type = 'placed';
@@ -58,7 +58,7 @@
 				$GRID.grid[index_row + 1].isFocus = true;
 			}
 			if (
-				$CURRENT_WORD ===
+				$CURRENT_WORD.word ===
 				$GRID.grid[index_row].row
 					.map((element) => element.character)
 					.join('')
@@ -81,13 +81,15 @@
 <div class="flex flex-col items-center justify-evenly h-full">
 	{#if $GRID.date === parseDate(new Date())}
 		{#if $WIN.isWon}
-			<div class="font-primary h-[60px] font-extrabold text-[60px] text-lime-300">YOU WON</div>
+			<div class="font-primary h-[60px] font-extrabold text-[60px] text-lime-300">
+				YOU WON <span class="text-[30px]">#{$WIN.streak}</span>
+			</div>
 		{:else}
 			<div class="flex flex-row h-[60px] items-center w-screen flex-wrap justify-center">
 				{#each $USED_LETTERS as i, k}
 					<div class="flex-none">
 						<div
-							class="font-primary m-1 flex flex-col items-center justify-center rounded-lg font-extrabold md:text-[30px] text-[20px] w-[30px] h-[30px] md:w-[50px] md:h-[50px] {$CURRENT_WORD
+							class="font-primary m-1 flex flex-col items-center justify-center rounded-lg font-extrabold md:text-[30px] text-[20px] w-[30px] h-[30px] md:w-[50px] md:h-[50px] {$CURRENT_WORD.word
 								.split('')
 								.includes(i.toUpperCase())
 								? 'bg-yellow-300'
@@ -128,5 +130,16 @@
 			</form>
 		{/each}
 	</div>
-	<div class="h-[60px]" />
+	<div class="h-[60px] w-full">
+		{#if $WIN.isWon}
+			<div class="text-white">
+				<div class="text-[40px] font-[courier] font-extrabold capitalize tracking-tight">
+					{$CURRENT_WORD.word} = () =>
+				</div>
+				<div class="font-[monospace] text-black font-bold bg-lime-300 px-4 text-[25px]">
+					{$CURRENT_WORD.info}
+				</div>
+			</div>
+		{/if}
+	</div>
 </div>
