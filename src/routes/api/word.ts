@@ -7,26 +7,26 @@ export const get = () => {
 	const words: word[] = [
 		{
 			word: 'CONST',
-			date: '6/16/2022',
+			date: '06/16/2022',
 			info: 'A keyword that defines a variable or pointer as unchangeable.'
 		},
 		{
 			word: 'FLOOR',
-			date: '6/17/2022',
+			date: '06/17/2022',
 			info: 'Function returns the largest integer less than or equal to a given number.'
 		},
 		{
 			word: 'ASYNC',
-			date: '6/18/2022',
+			date: '06/18/2022',
 			info: 'Ensures that the function returns a promise, and wraps non-promises in it.'
 		},
 		{
 			word: 'AWAIT',
-			date: '6/16/2022',
+			date: '06/16/2022',
 			info: 'Inside an async function you can use the await keyword before a call to a function that returns a promise.'
 		}
 	];
-	const word = words.find((element) => element.date === new Date().toLocaleDateString());
+	const word = words.find((element) => element.date === parseDate(new Date()));
 	if (word) {
 		const { date, ...data } = word;
 		return {
