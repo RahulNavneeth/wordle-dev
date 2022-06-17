@@ -27,16 +27,12 @@
 		}
 
 		const used_letters = localStorage.getItem('used_letters');
-		if (used_letters && data) {
+		if (used_letters) {
 			$USED_LETTERS = JSON.parse(used_letters);
-		} else {
-			localStorage.removeItem('used_letters');
 		}
 		const win = localStorage.getItem('win');
-		if (win && data) {
+		if (win) {
 			$WIN = JSON.parse(win);
-		} else {
-			localStorage.removeItem('win');
 		}
 	});
 </script>
