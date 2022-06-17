@@ -142,7 +142,7 @@
 		{/each}
 	</div>
 	<div class="h-[60px] md:w-1/2 w-full">
-		{#if $WIN.isWon}
+		{#if $WIN.isWon === true}
 			<div class="text-white">
 				<div class="text-[40px] font-courier font-extrabold capitalize tracking-tight">
 					{$CURRENT_WORD.word} = () =>
