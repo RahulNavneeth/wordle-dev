@@ -22,7 +22,7 @@ export const get = () => {
 		},
 		{
 			word: 'AWAIT',
-			date: '06/16/2022',
+			date: '06/19/2022',
 			info: 'Inside an async function you can use the await keyword before a call to a function that returns a promise.'
 		}
 	];
