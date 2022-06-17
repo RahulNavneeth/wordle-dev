@@ -3,20 +3,22 @@
 	import { CURRENT_WORD } from '$lib/store/current_word';
 	import { WIN } from '$lib/store/win';
 	import { USED_LETTERS } from '$lib/store/used_letters';
+	import { parseDate } from '$lib/parseDate';
 
 	const onKeyUp = (index_row: number, index_cel: number, e: any) => {
 		const key = e.keyCode || e.charCode;
+		const CELL = $GRID.grid[index_row].row[index_cel];
 		if (key === 8) {
-			if ($GRID[index_row].row[index_cel].character === '') {
+			if (CELL.character === '') {
 				const cell = document.getElementById(`row${index_row}cell${index_cel - 1}`);
 				cell?.focus();
 			} else {
-				$GRID[index_row].row[index_cel].character = '';
+				CELL.character = '';
 			}
 		} else {
-			$GRID[index_row].row[index_cel].character = e.target.value;
+			CELL.character = e.target.value;
 			const cell = document.getElementById(`row${index_row}cell${index_cel + 1}`);
-			if ($GRID[index_row].row[index_cel].character.length === 1) {
+			if (CELL.character.length === 1) {
 				if (index_cel !== 5) {
 					cell?.focus();
 				}
@@ -26,39 +28,37 @@
 	};
 
 	const submit = (index_row: number) => {
-		if ($GRID[index_row].row.map((element) => element.character).includes('')) {
-			for (const i in $GRID[index_row].row) {
-				if ($GRID[index_row].row[i].character === '') {
-					$GRID[index_row].row[i].type = 'error';
+		const ROW = $GRID.grid[index_row].row;
+		if (ROW.map((element) => element.character).includes('')) {
+			for (const i in ROW) {
+				if (ROW[i].character === '') {
+					ROW[i].type = 'error';
 				} else {
-					$GRID[index_row].row[i].type = 'normal';
+					ROW[i].type = 'normal';
 				}
 			}
 		} else {
 			document.getElementById(`row${index_row + 1}cell0`)?.focus();
-			$GRID[index_row].isFocus = false;
-			$GRID[index_row].row
-				.map((element) => element.character)
-				.map((element, i) => {
-					const current_word = $CURRENT_WORD.split('');
-					if (current_word.includes($GRID[index_row].row[i].character.toUpperCase())) {
-						if (current_word[i] === element.toUpperCase()) {
-							$GRID[index_row].row[i].type = 'placed';
-						} else {
-							$GRID[index_row].row[i].type = 'misplaced';
-						}
+			$GRID.grid[index_row].isFocus = false;
+			ROW.map((element) => element.character).map((element, i) => {
+				const current_word = $CURRENT_WORD.split('');
+				if (current_word.includes(ROW[i].character.toUpperCase())) {
+					if (current_word[i] === element.toUpperCase()) {
+						ROW[i].type = 'placed';
+					} else {
+						ROW[i].type = 'misplaced';
 					}
-					if (!$USED_LETTERS.includes(element)) {
-						$USED_LETTERS = [...$USED_LETTERS, element];
-					}
-				});
+				}
+				if (!$USED_LETTERS.includes(element)) {
+					$USED_LETTERS = [...$USED_LETTERS, element];
+				}
+			});
 			if (index_row !== 5) {
-				$GRID[index_row + 1].isFocus = true;
+				$GRID.grid[index_row + 1].isFocus = true;
 			}
 			if (
 				$CURRENT_WORD ===
-				$GRID[index_row].row
-					.map((element) => element.character)
+				ROW.map((element) => element.character)
 					.join('')
 					.toUpperCase()
 			) {
@@ -66,7 +66,7 @@
 				$WIN.streak++;
 				localStorage.setItem('win', JSON.stringify($WIN));
 				if (index_row !== 5) {
-					$GRID[index_row + 1].isFocus = false;
+					$GRID.grid[index_row + 1].isFocus = false;
 				}
 			}
 		}
@@ -77,27 +77,29 @@
 </script>
 
 <div class="flex flex-col items-center justify-evenly h-full">
-	{#if $WIN.isWon}
-		<div class="font-primary h-[60px] font-extrabold text-[60px] text-lime-300">YOU WON</div>
-	{:else}
-		<div class="flex flex-row h-[60px] items-center w-screen flex-wrap justify-center">
-			{#each $USED_LETTERS as i, k}
-				<div class="flex-none">
-					<div
-						class="font-primary m-1 flex flex-col items-center justify-center rounded-lg font-extrabold md:text-[30px] text-[20px] w-[30px] h-[30px] md:w-[50px] md:h-[50px] {$CURRENT_WORD
-							.split('')
-							.includes(i.toUpperCase())
-							? 'bg-yellow-300'
-							: 'bg-red-500'} text-black"
-					>
-						{i.toUpperCase()}
+	{#if $GRID.date === parseDate(new Date())}
+		{#if $WIN.isWon}
+			<div class="font-primary h-[60px] font-extrabold text-[60px] text-lime-300">YOU WON</div>
+		{:else}
+			<div class="flex flex-row h-[60px] items-center w-screen flex-wrap justify-center">
+				{#each $USED_LETTERS as i, k}
+					<div class="flex-none">
+						<div
+							class="font-primary m-1 flex flex-col items-center justify-center rounded-lg font-extrabold md:text-[30px] text-[20px] w-[30px] h-[30px] md:w-[50px] md:h-[50px] {$CURRENT_WORD
+								.split('')
+								.includes(i.toUpperCase())
+								? 'bg-yellow-300'
+								: 'bg-red-500'} text-black"
+						>
+							{i.toUpperCase()}
+						</div>
 					</div>
-				</div>
-			{/each}
-		</div>
+				{/each}
+			</div>
+		{/if}
 	{/if}
 	<div class="w-full flex flex-col items-center">
-		{#each $GRID as row, index_row}
+		{#each $GRID.grid as row, index_row}
 			<form on:submit|preventDefault={() => submit(index_row)}>
 				<div id="row" class="flex flex-row items-center jusity-center">
 					{#each row.row as cell, index_cell}
