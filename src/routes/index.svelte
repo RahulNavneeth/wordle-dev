@@ -136,7 +136,7 @@
 				<div class="text-[40px] font-courier font-extrabold capitalize tracking-tight">
 					{$CURRENT_WORD.word} = () =>
 				</div>
-				<div class="font-[monospace] text-black font-bold bg-lime-300 px-4 text-[25px]">
+				<div class="font-courier text-black font-bold bg-lime-300 px-4 text-[25px]">
 					{$CURRENT_WORD.info}
 				</div>
 			</div>
