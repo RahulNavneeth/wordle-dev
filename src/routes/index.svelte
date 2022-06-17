@@ -70,6 +70,15 @@
 				if (index_row !== 5) {
 					$GRID.grid[index_row + 1].isFocus = false;
 				}
+			} else {
+				if (index_row === 5) {
+					$WIN.isWon = false;
+					$WIN.streak == 0;
+					localStorage.setItem('win', JSON.stringify($WIN));
+					if (index_row !== 5) {
+						$GRID.grid[index_row + 1].isFocus = false;
+					}
+				}
 			}
 		}
 
@@ -78,13 +87,13 @@
 	};
 </script>
 
-<div class="flex flex-col items-center justify-evenly h-full">
+<div class="flex flex-col w-full items-center justify-evenly h-full">
 	{#if $GRID.date === parseDate(new Date())}
-		{#if $WIN.isWon}
+		{#if $WIN.isWon === true}
 			<div class="font-primary h-[60px] font-extrabold text-[60px] text-lime-300">
 				YOU WON <span class="text-[30px]">#{$WIN.streak}</span>
 			</div>
-		{:else}
+		{:else if $WIN.isWon === 'PLAYING'}
 			<div class="flex flex-row h-[60px] items-center w-screen flex-wrap justify-center">
 				{#each $USED_LETTERS as i, k}
 					<div class="flex-none">
@@ -100,6 +109,8 @@
 					</div>
 				{/each}
 			</div>
+		{:else}
+			<div class="font-primary h-[60px] font-extrabold text-[60px] text-red-400">YOU LOST</div>
 		{/if}
 	{/if}
 	<div class="w-full flex flex-col items-center">
@@ -130,7 +141,7 @@
 			</form>
 		{/each}
 	</div>
-	<div class="h-[60px] w-full">
+	<div class="h-[60px] md:w-1/2 w-full">
 		{#if $WIN.isWon}
 			<div class="text-white">
 				<div class="text-[40px] font-courier font-extrabold capitalize tracking-tight">
