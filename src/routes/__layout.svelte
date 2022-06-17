@@ -27,7 +27,7 @@
 		}
 
 		const used_letters = localStorage.getItem('used_letters');
-		if (used_letters) {
+		if (used_letters && data) {
 			$USED_LETTERS = JSON.parse(used_letters);
 		}
 		const win = localStorage.getItem('win');
