@@ -6,7 +6,8 @@ type word = { word: string; info: string };
 export const CURRENT_WORD = writable<word>({ word: '', info: '' });
 
 const getWord = async () => {
-	const { data } = await axios.get(`${API_HOST}/api/word`);
+	const response = await fetch(`${API_HOST}/api/word`);
+	const data = await response.json();
 	CURRENT_WORD.update((x) => {
 		x = data.word;
 		return x;
