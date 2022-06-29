@@ -46,7 +46,7 @@ export const get = () => {
 			info: 'An extensible program-code-template for creating objects, providing initial values for state and implementations of behavior.'
 		}
 	];
-	const word = words.find((element) => element.date === parseDate(new Date()));
+	const word = words[Math.floor(Math.random() * words.length)];
 	if (word) {
 		const { date, ...data } = word;
 		return {
