@@ -1,4 +1,5 @@
 import { TERMS } from '$lib/store/terms';
+import axios from 'axios';
 import puppeteer from 'puppeteer';
 export const GET = async () => {
 	const browser = await puppeteer.launch();
@@ -9,14 +10,19 @@ export const GET = async () => {
 
 	const term = terms[Math.floor(Math.random() * terms.length)];
 
-	await page.goto(`https://www.google.com/search?q=${term}`);
+	await page.goto(`https://www.hackterms.com/${term}`);
+	console.log(term);
+	const selector = 'definition-body';
 
-	const data = await page.evaluate(async () => {
-		return await document.querySelectorAll(
-			'#kp-wp-tab-overview > div.TzHB6b.cLjAic.LMRCfc > div > div > div > div > div > div > div:nth-child(1) > div > div > div > span:nth-child(2)'
-		)[0]?.innerHTML;
-	});
+	await axios.get(`https://www.hackterms.com/${term}`);
+	const data = await page.evaluate(async (selector) => {
+		//@ts-ignore
+		return await document.getElementsByClassName(selector)[0]?.innerText;
+	}, selector);
 
 	await browser.close();
-	return new Response(JSON.stringify({ term: term, def: data.split('.')[0] + '.' }));
+
+	return new Response(
+		JSON.stringify({ term: term, def: data, date: new Date().toLocaleDateString() })
+	);
 };

@@ -6,7 +6,7 @@ type grid = {
 	row: { type: 'normal' | 'error' | 'placed' | 'misplaced'; character: string }[];
 };
 
-export let GRID = writable<{ date: string; grid: grid[] }>({
+export const GRID = writable<{ date: string; grid: grid[] }>({
 	date: parseDate(new Date()),
 	grid: [...Array(6)].map((_element, index) => {
 		return {
