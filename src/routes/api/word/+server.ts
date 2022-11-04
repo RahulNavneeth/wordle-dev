@@ -11,7 +11,6 @@ export const GET = async () => {
 	const term = terms[Math.floor(Math.random() * terms.length)];
 
 	await page.goto(`https://www.hackterms.com/${term}`);
-	console.log(term);
 	const selector = 'definition-body';
 
 	await axios.get(`https://www.hackterms.com/${term}`);
