@@ -1,20 +1,81 @@
 <script lang="ts">
 	import { GRID } from '$lib/store/grid';
-	import { CURRENT_WORD } from '$lib/store/current_word';
+	import { CURRENT_GUESS, CURRENT_WORD } from '$lib/store/current';
 	import { WIN } from '$lib/constant';
 	import { USED_LETTERS } from '$lib/constant';
-	import { parseDate } from '$lib/parseDate';
+	import { parseDate } from '$lib/function/parseDate';
 	import { TERMS } from '$lib/store/terms';
+	import { getLs } from '$lib/function/getLSvalue';
+	import { onMount } from 'svelte';
 
 	console.log($CURRENT_WORD, $GRID);
 
-	const CURRENT_LIST = $TERMS.filter((i) => i.length === $CURRENT_WORD?.term.length);
-	const LEN_WORD = $CURRENT_WORD?.term.length;
+	const LEN_WORD = $CURRENT_WORD?.term.length as number;
+	const CURRENT_LIST = $TERMS.filter((i) => i.length === LEN_WORD);
 
-	window.localStorage.setItem(
-		'CURRENT_GUESS',
-		JSON.stringify(Array(6).map((j) => Array(LEN_WORD).map((i) => '')))
-	);
+	window.localStorage.setItem('CURRENT_GUESS', JSON.stringify([...Array(6)].map((i) => '')));
+
+	CURRENT_GUESS.set(getLs('CURRENT_GUESS'));
+
+	setInterval(() => {
+		document.getElementById('INPUT_WORD')?.focus();
+	}, 1000);
+
+	let value = '';
+	let count = 0;
+
+	const submit = () => {
+		if (value.length != LEN_WORD) {
+			$GRID.grid[count].row.map((i) => (i.type = 'normal'));
+			for (let i = 0; i < LEN_WORD - value.length; i++) {
+				$GRID.grid[count].row[LEN_WORD - i - 1].type = 'error';
+			}
+		} else {
+			$GRID.grid[count].isFocus = false;
+			if (value === $CURRENT_WORD?.term) {
+				$GRID.grid[count].row.map((i) => {
+					i.type = 'placed';
+					i.character;
+					return i;
+				});
+				console.log($GRID);
+				$WIN.isWon = true;
+			} else {
+				count++;
+				if (count === 6) {
+					$WIN.isWon = false;
+				} else {
+					for (let i = 0; i < LEN_WORD; i++) {
+						if (value[i] === $CURRENT_WORD?.term[i]) {
+							$GRID.grid[count - 1].row[i].type = 'placed';
+						} else if ($CURRENT_WORD?.term.includes(value[i])) {
+							$GRID.grid[count - 1].row[i].type = 'misplaced';
+						}
+					}
+					$GRID.grid[count].isFocus = true;
+					value = '';
+				}
+				console.log(false);
+			}
+		}
+	};
+
+	window.addEventListener('keydown', (e) => {
+		if (e.key === 'Backspace') {
+			value = value.slice(0, value.length - 1);
+			$CURRENT_GUESS != null ? ($CURRENT_GUESS[count] = value) : '';
+		} else if (e.key === 'Enter') {
+			submit();
+		} else {
+			if (
+				(e.keyCode >= 48 && e.keyCode <= 57) ||
+				(e.keyCode >= 65 && e.keyCode <= 90 && value.length < LEN_WORD)
+			) {
+				value += e.key.toLowerCase();
+				$CURRENT_GUESS != null ? ($CURRENT_GUESS[count] = value) : '';
+			}
+		}
+	});
 </script>
 
 <div class="flex flex-col w-full items-center justify-evenly h-full">
@@ -60,9 +121,13 @@
 							? 'border-lime-700 bg-lime-300 text-black shadow-inner'
 							: cell.type === 'misplaced'
 							? 'border-yellow-700 bg-yellow-300 text-black'
-							: 'border-gray-500 bg-black text-white'} outline-none font-primary capitalize font-black rounded-md m-1"
+							: 'border-gray-500 bg-black text-white'} outline-none flex flex-col items-center justify-center font-primary capitalize font-black rounded-md m-1"
 					>
-						hello
+						{$CURRENT_GUESS != null
+							? $CURRENT_GUESS[index_row][index_cell] === undefined
+								? ''
+								: $CURRENT_GUESS[index_row][index_cell]
+							: 'undefined'}
 					</div>
 				{/each}
 				<button class="hidden" />

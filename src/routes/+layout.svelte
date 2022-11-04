@@ -1,12 +1,12 @@
 <script>
 	import Nav from '$lib/components/nav.svelte';
-	import { parseDate } from '$lib/parseDate';
+	import { parseDate } from '$lib/function/parseDate';
 	// import { GRID } from '$lib/store/grid';
 	import { API_HOST, USED_LETTERS } from '$lib/constant';
 	import { WIN } from '$lib/constant';
 	import { onMount } from 'svelte';
 	import '../app.css';
-	import { CURRENT_WORD } from '$lib/store/current_word';
+	import { CURRENT_WORD } from '$lib/store/current';
 	import axios from 'axios';
 	import { GRID } from '$lib/store/grid';
 
@@ -46,7 +46,7 @@
 		{#if $CURRENT_WORD != null && $GRID != null}
 			<slot />
 		{:else}
-			<span class="font-mono text-[30px] text-black px-2  font-black underline bg-lime-300"
+			<span class="font-courier text-[30px] text-black px-2  font-black underline bg-lime-300"
 				>Loading{dots}</span
 			>
 		{/if}
