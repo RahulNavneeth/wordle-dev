@@ -6,13 +6,10 @@
 	import { parseDate } from '$lib/function/parseDate';
 	import { TERMS } from '$lib/store/terms';
 	import { getLs } from '$lib/function/getLSvalue';
-	import { onMount } from 'svelte';
-
-	console.log($CURRENT_WORD, $GRID);
 
 	const LEN_WORD = $CURRENT_WORD?.term.length as number;
 	const CURRENT_LIST = $TERMS.filter((i) => i.length === LEN_WORD);
-
+	console.log(CURRENT_LIST);
 	window.localStorage.setItem('CURRENT_GUESS', JSON.stringify([...Array(6)].map((i) => '')));
 
 	CURRENT_GUESS.set(getLs('CURRENT_GUESS'));
@@ -31,31 +28,47 @@
 				$GRID.grid[count].row[LEN_WORD - i - 1].type = 'error';
 			}
 		} else {
-			$GRID.grid[count].isFocus = false;
-			if (value === $CURRENT_WORD?.term) {
-				$GRID.grid[count].row.map((i) => {
-					i.type = 'placed';
-					i.character;
-					return i;
-				});
-				console.log($GRID);
-				$WIN.isWon = true;
-			} else {
-				count++;
-				if (count === 6) {
-					$WIN.isWon = false;
+			$GRID.grid[count].row.map((i) => {
+				i.type = 'normal';
+				return i;
+			});
+			if (CURRENT_LIST.includes(value)) {
+				$GRID.grid[count].isFocus = false;
+				if (value === $CURRENT_WORD?.term) {
+					$GRID.grid[count].row.map((i) => {
+						i.type = 'placed';
+						return i;
+					});
+					$WIN.isWon = true;
 				} else {
-					for (let i = 0; i < LEN_WORD; i++) {
-						if (value[i] === $CURRENT_WORD?.term[i]) {
-							$GRID.grid[count - 1].row[i].type = 'placed';
-						} else if ($CURRENT_WORD?.term.includes(value[i])) {
-							$GRID.grid[count - 1].row[i].type = 'misplaced';
+					count++;
+					if (count === 6) {
+						$WIN.isWon = false;
+					} else {
+						for (let i = 0; i < LEN_WORD; i++) {
+							if (value[i] === $CURRENT_WORD?.term[i]) {
+								$GRID.grid[count - 1].row[i].type = 'placed';
+							} else if ($CURRENT_WORD?.term.includes(value[i])) {
+								$GRID.grid[count - 1].row[i].type = 'misplaced';
+							}
 						}
+						$GRID.grid[count].isFocus = true;
+						value = '';
 					}
-					$GRID.grid[count].isFocus = true;
-					value = '';
 				}
-				console.log(false);
+			} else {
+				for (let i = 0; i < LEN_WORD; i++) {
+					document.getElementById(`row${count}`)?.classList.add('animate-shake');
+					setTimeout(() => {
+						document.getElementById(`row${count}`)?.classList.remove('animate-shake');
+					}, 1000);
+				}
+				// setTimeout(() => {
+				// 	$GRID.grid[count].row.map((i) => {
+				// 		i.type = 'error';
+				// 		return i;
+				// 	});
+				// });
 			}
 		}
 	};
@@ -106,13 +119,10 @@
 	{/if}
 	<div class="w-full flex flex-col items-center">
 		{#each $GRID.grid as row, index_row}
-			<div id="row" class="flex flex-row items-center jusity-center">
+			<div id="row-{index_row}" class="flex flex-row items-center jusity-center">
 				{#each row.row as cell, index_cell}
 					<div
-						disabled={!row.isFocus}
-						type="text"
 						id="row{index_row}cell{index_cell}"
-						maxlength="1"
 						class="w-[60px] h-[60px] focus:scale-[110%] transition-all text-center border-2 text-[30px] {row.isFocus
 							? cell.type === 'error'
 								? 'border-red-700 bg-black text-white'
