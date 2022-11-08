@@ -9,6 +9,8 @@
 	import { CURRENT_WORD } from '$lib/store/current';
 	import axios from 'axios';
 	import { GRID } from '$lib/store/grid';
+	import Defmodel from '$lib/components/model/defmodel.svelte';
+	import { model } from '$lib/components/model/model';
 
 	onMount(async () => {
 		const { data } = await axios.get(`${API_HOST}/api/word`);
@@ -19,7 +21,7 @@
 				return {
 					isFocus: index === 0 ? true : false,
 					row: [...Array(data.term.length)].map(() => {
-						return { type: 'normal', character: '' };
+						return { type: 'normal' };
 					})
 				};
 			})
@@ -44,6 +46,9 @@
 	<!-- <Nav /> -->
 	<div class="w-full h-full flex flex-col items-center justify-center">
 		{#if $CURRENT_WORD != null && $GRID != null}
+			{#if $model}
+				<Defmodel data={$CURRENT_WORD} />
+			{/if}
 			<slot />
 		{:else}
 			<span class="font-courier text-[30px] text-black px-2  font-black underline bg-lime-300"

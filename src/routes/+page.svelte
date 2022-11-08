@@ -6,10 +6,11 @@
 	import { parseDate } from '$lib/function/parseDate';
 	import { TERMS } from '$lib/store/terms';
 	import { getLs } from '$lib/function/getLSvalue';
+	import { model } from '$lib/components/model/model';
 
 	const LEN_WORD = $CURRENT_WORD?.term.length as number;
 	const CURRENT_LIST = $TERMS.filter((i) => i.length === LEN_WORD);
-	console.log(CURRENT_LIST);
+	console.log($CURRENT_WORD?.term, CURRENT_LIST);
 	window.localStorage.setItem('CURRENT_GUESS', JSON.stringify([...Array(6)].map((i) => '')));
 
 	CURRENT_GUESS.set(getLs('CURRENT_GUESS'));
@@ -44,6 +45,15 @@
 					count++;
 					if (count === 6) {
 						$WIN.isWon = false;
+						$GRID.grid.map((i) => {
+							i.row.map((value) => {
+								if (value.type === 'placed' || value.type === 'misplaced') {
+									value.type = 'failed';
+								}
+								return value;
+							});
+							return i;
+						});
 					} else {
 						for (let i = 0; i < LEN_WORD; i++) {
 							if (value[i] === $CURRENT_WORD?.term[i]) {
@@ -57,18 +67,10 @@
 					}
 				}
 			} else {
-				for (let i = 0; i < LEN_WORD; i++) {
-					document.getElementById(`row${count}`)?.classList.add('animate-shake');
-					setTimeout(() => {
-						document.getElementById(`row${count}`)?.classList.remove('animate-shake');
-					}, 1000);
-				}
-				// setTimeout(() => {
-				// 	$GRID.grid[count].row.map((i) => {
-				// 		i.type = 'error';
-				// 		return i;
-				// 	});
-				// });
+				document.getElementById(`row-${count}`)?.classList.add('animate-shake');
+				setTimeout(() => {
+					document.getElementById(`row-${count}`)?.classList.remove('animate-shake');
+				}, 1000);
 			}
 		}
 	};
@@ -123,7 +125,7 @@
 				{#each row.row as cell, index_cell}
 					<div
 						id="row{index_row}cell{index_cell}"
-						class="w-[60px] h-[60px] focus:scale-[110%] transition-all text-center border-2 text-[30px] {row.isFocus
+						class="w-[35px] h-[35px] md:w-[60px] md:h-[60px] focus:scale-[110%] transition-all text-center border-2 text-[20px] md:text-[30px] {row.isFocus
 							? cell.type === 'error'
 								? 'border-red-700 bg-black text-white'
 								: 'border-white bg-black text-white'
@@ -131,6 +133,8 @@
 							? 'border-lime-700 bg-lime-300 text-black shadow-inner'
 							: cell.type === 'misplaced'
 							? 'border-yellow-700 bg-yellow-300 text-black'
+							: cell.type === 'failed'
+							? 'border-red-800 bg-red-400'
 							: 'border-gray-500 bg-black text-white'} outline-none flex flex-col items-center justify-center font-primary capitalize font-black rounded-md m-1"
 					>
 						{$CURRENT_GUESS != null
@@ -144,7 +148,7 @@
 			</div>
 		{/each}
 	</div>
-	<div class="h-[60px] md:w-1/2 w-full">
+	<div class="h-[60px] md:w-fit w-full">
 		{#if $WIN.isWon != 'PLAYING'}
 			<div class="text-white">
 				<div class="text-[40px] font-courier font-extrabold capitalize tracking-tight">
@@ -155,7 +159,18 @@
 						? 'bg-lime-300'
 						: 'bg-red-400'}  px-4 text-[25px]"
 				>
-					{$CURRENT_WORD?.def}
+					{#if $CURRENT_WORD?.def !== undefined}
+						{#if $CURRENT_WORD?.def.split(' ').length > 8}
+							{$CURRENT_WORD?.def.split(' ').slice(0, 8).join(' ') + '...'}
+							<button
+								on:click={() => {
+									model.set(true);
+								}}><span class="underline">more</span>?</button
+							>
+						{:else}
+							{$CURRENT_WORD.def}
+						{/if}
+					{/if}
 				</div>
 			</div>
 		{/if}
